@@ -1,0 +1,58 @@
+---
+title: "Markdown Tutorial for Scientists: \nIt's Not Only for Programmers"
+author: "Micaela Chan"
+github-repo: mychan24/markdown-for-scientists
+site: bookdown::bookdown_site
+documentclass: book
+url: https\://gitbookdown.site/
+---
+
+# Preface {-} 
+## What is this Markdown Tutorial about? {-} 
+
+The goal of this tutorial is to help scientists to **(1) see why its important to start using Markdown consistently at various context of their own projects** and **(2) start using [markdown](https://www.markdownguide.org/)**
+
+
+## What is Markdown? {-}
+
+It is a markup language (albeit a lightweight one) that can be rendered into formatted text. The nice thing about *markdown* in particular is its readability even when it is not formatted.  
+
+In short, Markdown as pure text is very readable and organized, can be converted into *pretty* documents or webpage! 
+
+See [Markdown Guide](https://www.markdownguide.org/basic-syntax/) for basic syntax.
+
+
+## When would scientists use markdown?{-} 
+
+### 1. README files{-} 
+A README file is a text file that explains your project/code/package. It should contain information that is required for users who are not the author to understand and use what the README is explaining.
+
+For more info on how and why to create a README file: https://www.makeareadme.com/
+
+### 2. Analysis workbook such as R Markdown and Jupyter notebook uses markdown {-} 
+Modern analysis softwares often comes with a way to create presentatble workbook that merges your code and text in one document. This is often achieved by using markdown. Knowing the in-and-outs of markdown will help you format the analysis you will share with others!
+
+**Common Markdown usage in analysis softwares**
+
+* [R Markdown](https://rmarkdown.rstudio.com/lesson-1.html)
+* Python [Jupyter notebook](https://jupyter.org/)
+* Matlab livescript can be [converted to markdown](https://www.mathworks.com/matlabcentral/fileexchange/73993-livescript2markdown-matlab-s-live-scripts-to-markdown)
+
+### 3. Make a webpage! {-} 
+A Markdown file can be easily converted into an html webpage, which lends itself to be a good tool for blogging, or even making a full fledge webpage. You can make a personal webpage highlighting your work! Or an easy webpage that contains all the necessary info for a project that you want to share with others.
+
+* Using [R Markdown](https://rmarkdown.rstudio.com/lesson-13.html) or [Bookdown](https://bookdown.org/home/) to make a website
+* Make an easy website with a bunch of markdowns using a [github page](https://nicolas-van.github.io/easy-markdown-to-github-pages/)
+
+
+# Encourages open source and open science {-} 
+
+* Markdown encourages you to organize your README to be systematically readable to a stranger, even in pure text form. It is rendered to be pretty and even more readable by common tools (e.g., Github).
+* Markdown is used in sharing workbooks that combines text and codes, which is one of the best way to ensure reproducable analyses.
+
+These are both practices important to encourage open science practices. [Open science](https://en.wikipedia.org/wiki/Open_science) is a movement to make data, samples, software and all things related to a scientific finding as transparent and easy to access as possible. There are pros and cons to an open and closed system, which is not a topic that can be adequately covered here (for more info, checkout [Center for Open Science](https://cos.io/)).
+
+However, given a common goal of wanting more people to understand, reproduce, and build on top of previous work, an **'open’** approach to your code with good documentation is is certainly a good place to start!
+
+
+

@@ -1,0 +1,19 @@
+bookdown::gitbook: 
+    includes:
+      in_header: 
+      after_body: 
+    config:
+      toc:
+        collapse: section
+        scroll_highlight: yes
+        before: |
+          <li><a href="./"><strong>Markdown for Scientists</strong><br></a></li>
+        after: |
+          <li style="padding: 10px 15px; font-weight: bold;">Open access book-in-progress</li>
+          <li><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a></li>
+          <li><a href="https://bookdown.org" target="_blank">Built with Bookdown</a></li>
+      toolbar:
+        position: static
+      search: yes
+      
+bookdown::pdf_book: default

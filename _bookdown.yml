@@ -1,0 +1,4 @@
+book_filename: "markdown_for_scientists.Rmd"
+rmd_subdir: Rmd
+edit: https://github.com/mychan24/markdown-for-scientists/edit/master/%s
+output_dir: "docs"

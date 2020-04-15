@@ -1,0 +1,116 @@
+---
+title: "FK"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Load libraries 
+library(tidyverse)
+
+# Custom theme/whatever
+
+theme_custom <- theme_classic() +
+  theme(text = element_text(size=15),
+        legend.text = element_text(size=10))
+```
+
+```{r}
+
+load("~/Desktop/study1.data.RData")
+
+DT::datatable(study1.data)
+
+```
+
+
+```{r, fig.width=10, fig.height=3}
+g <- study1.data %>% 
+  ggplot(., aes(x=z.layc_ent, y=reputcorg, shape=ai_cond, color=ai_cond, fill=ai_cond)) +
+  geom_point() + 
+  geom_smooth(method = "lm", size=1.5, se=TRUE, fullrange=TRUE) +
+  # Facet
+  facet_wrap(~white) +
+  labs(x ="Essentialist Mindset (Z-score)", y = "Reactions to the Organization") +
+  # Set Color
+  scale_color_brewer(palette="Paired") +
+  scale_fill_brewer(palette="Paired") +
+  # Legend
+  guides(fill = guide_legend(title = "AI Condition", title.position = "top"),
+         color = guide_legend(title = "AI Condition", title.position = "top"),
+         shape = guide_legend(title = "AI Condition", title.position = "top")) +
+  theme_classic() +
+  theme(text = element_text(size=15),
+        legend.text = element_text(size=10))
+
+ggsave(filename = "~/Desktop/fk.svg", plot = g, width = 10, height = 3)
+
+
+df <- study1.data
+
+
+nw <- df %>% filter(white==0)
+
+
+```
+
+
+# Defining funciton to plot stuff
+```{r}
+plotfunc <- function(df, x, y, cond, xlabname, ylabname, condname, z=NULL){  
+  ggplot(data=df, aes_string(x=x, y=y, shape=cond, color=cond, fill=cond)) +
+  geom_point() + 
+  geom_smooth(method = "lm", size=1.5, se=TRUE, fullrange=TRUE) +
+  labs(x =xlabname, y = ylabname) +
+    
+  # Set Color
+  scale_color_brewer(palette="Paired") +
+  scale_fill_brewer(palette="Paired") +
+  # Legend
+  guides(fill = guide_legend(title = condname, title.position = "top"),
+         color = guide_legend(title = condname, title.position = "top"),
+         shape = guide_legend(title = condname, title.position = "top")) +
+  theme_classic() +
+  theme(text = element_text(size=15),
+        legend.text = element_text(size=10))
+}
+
+```
+
+# Plotting using a function we just made
+```{r}
+plotfunc(df = study1.data, x = "z.layc_ent", 
+         y = "reputcorg", 
+         cond = "ai_cond", 
+         xlabname = "Essentialist Mindset (Z-score)", 
+         ylabname =  "Reactions to the Organization", 
+         condname = "AI Condition")
+```
+
+
+
+```{r}
+# library(ggpubr)
+
+# study1.data %>%
+#   ggplot(., aes(x=z.layc_ent, y=reputcorg, shape=ai_cond, color=ai_cond, fill=ai_cond)) +
+#   geom_point() +
+#   geom_smooth(method=lm) +
+#   ggpubr::stat_cor() +
+#   scale_fill_brewer(palette = "Paired") +
+#   scale_color_brewer(palette = "Paired") +
+#   theme_bw()
+# 
+
+study1.data$white <- factor(study1.data$white)
+study1.data %>%
+  ggplot(., aes(x=white, y=reputcorg, color=ai_cond)) +
+  geom_boxplot() +
+  ggpubr::stat_compare_means(method = "t.test") +
+  # scale_fill_brewer(palette = "Paired") +
+  scale_color_brewer(palette = "Paired") +
+  theme_bw()
+
+```
+

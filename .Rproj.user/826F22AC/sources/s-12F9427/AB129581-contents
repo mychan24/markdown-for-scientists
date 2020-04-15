@@ -1,0 +1,239 @@
+## mchan R stuff
+# UPDATE: 9-26-2019
+# -------------- Installing New R Version ------------------ #
+install.packages("tidyverse")
+install.packages("devtools")
+install.packages("lme4", "afex", "car","Hmisc","psychometric", "cocor","QuantPsyc","interactions")
+install.packages("ExPosition","InPosition")
+install.packages(c("gridExtra", "sjPlot", "GGally", "ggrepel", "ggpubr","kableExtra"))
+
+devtools::install_github("mychan24/superheat")
+
+# -------------- Functions  ------------------ #
+# 1. STATS
+#   1.1 - Within/Between-subject ANOVA
+#   1.2 - Correlation labels for ggplot (ddply) | use ggpubr 
+#   1.3 - t-test stats (ddply) | use ggpubr
+#   1.4 - Residuals variables (regressed)
+#   1.5 - (Mediation Analysis - to make )
+#   1.6 - beta -> Std Beta
+#   1.7 - Cronbach's Alpha (psych package)
+#   1.8 - Compare correlation values
+#   1.9 - Chi-squared test
+#   1.10 - Mixed Modeling (lmer)
+# 2. Plotting
+#   2.1 - Color
+#   2.2 - Axis label settings for ggplot
+#   2.3 - Spaghetti Plot (color changing slope)
+# 3. dplyr
+# 4. R Markdown
+# 5. MISC
+#   5.1 - Reorder factors
+#   5.2 - xls files
+
+#### --- 1. STATS --- ####
+# -------------------------------------------- #
+# 1.1 - Within Between ANOVA
+# -------------------------------------------- #
+library(afex)
+
+aov_ez(id="", dv="", data=df, 
+       within=c(""),
+       between=c( ""), factorize = FALSE)
+
+# Z-test for comparing Pearson's r
+library(cocor)
+N <- nrow(x)
+compr.x.y <- cocor.dep.groups.overlap(r.jk=rr.z.x$r[2], r.jh=rr.z.y$r[2], 
+                                                 r.kh=rr.x.y$r, n=N, test="steiger1980")
+# -------------------------------------------- #
+# 1.2 & 1.3 - correlation/t-test labels for plots
+# -------------------------------------------- #
+library(ggpubr)
+
+# 1.2 correlation label add to scatter plot in ggplot
+stat_cor(aes(label=paste(..r.label.., ..p.label.., 
+                         cut(..p.., 
+                             breaks = c(-Inf, 0.0001, 0.001, 0.01, 0.05, Inf),
+                             labels = c("'****'", "'***'", "'**'", "'*'", "'ns'")),sep = "~"))) 
+
+# 1.3 t-stat labels use with box-plots in ggplot
+stat_compare_means()
+        
+
+## This old school for use with ggplot, just use ggpubr (2019/09/25 mchan)
+# library(plyr)
+# rr <-  ddply(dataframe, .(groupvar), summarise, 
+#              r=round(cor.test(x,y)$estimate,digits=3), 
+#              P=round(cor.test(x,y)$p.value,digits=3), 
+#              CI_l=round(cor.test(x,y)$conf.int[1],digits=3),
+#              CI_u=round(cor.test(x,y)$conf.int[2],digits=3),.drop = FALSE)
+# 
+# tt <- ddply(dataframe, .(groupvar), summarise, 
+#             t=round(t.test(y~x)$statistic,digits=3), 
+#             P=round(t.test(y~x)$p.value,digits=3), 
+#             xmean=round(t.test(y~x)$estimate[1], digits=3),
+#             ymean=round(t.test(y~x)$estimate[2], digits=3),.drop = FALSE)
+# 
+# for(i in 1:nrow(rr)){
+#   if(rr$P[i]>=.001)
+#     rr$labs[i] <- sprintf("r = %s,p = %s",rr$r[i],rr$P[i])
+#   else(
+#     rr$labs[i] <- sprintf("r = %s,p < 0.001",rr$r[i])
+#   )
+#   rr$x[i] <- min(x, na.rm=TRUE)+0.05
+# }
+# rr$y <-min(y,na.rm=TRUE)+0.05
+# 
+# geom_text(aes(x, y, label=labs),hjust=0, data=rr, size=7) + 
+  
+# -------------------------------------------- #
+# 1.4 - Residuals with NAs
+# -------------------------------------------- #
+residuals(lm(y~x, na.action = "na.exclude"))
+
+
+# -------------------------------------------- #
+# 1.5 - Mediation Analysis
+# -------------------------------------------- #
+
+# -------------------------------------------- #
+# 1.6 - Converting beta to standardized Beta
+# -------------------------------------------- #
+library(QuantPsyc)
+lm.beta(lm(Y~x))
+
+# -------------------------------------------- #
+# 1.7 - Cronbach's Alpha
+# -------------------------------------------- #
+library(psych)
+alpha()
+
+# -------------------------------------------- #
+# 1.8 - Compare correlation values
+# -------------------------------------------- #
+library(cocor)
+
+compr.within.between <- cocor.dep.groups.overlap(r.jk=, r.jh=, 
+                                                 r.kh=, n=, test="steiger1980")
+# -------------------------------------------- #
+# 1.9 - chi-squared test
+# -------------------------------------------- #
+chisq.test(tab.x)
+
+# -------------------------------------------- #
+# 1.10 - Mixed Modeling (lmer)
+# -------------------------------------------- #
+# https://strengejacke.github.io/mixed-models-snippets/random-effects-within-between-effects-model.html
+
+###  “Classical” growth-model for longitudinal data
+# tv = time-variant 
+# ti - time-invariant
+library(lmerTest) # use this instead of base lme4, gives p-value with summary()
+mod <- lmer(formula = y ~ time + age + x1_tv + z1 + z2_ti + (1 + time | ID),
+            data = d)
+
+## Get predicted values for all subjects including those with NAs in IVs
+predict(lmer_object, newdata=original_dataframe, allow.new.levels = TRUE)
+
+tab_model(mod, show.aic = T, show.re.var = T, show.loglik = T, p.style = "both",
+          title = "",
+          dv.labels = "",
+          show.se = T, string.se = "SE",
+          show.stat = T,
+          show.df = T) # df based on Kenward-Roger approximation
+
+#### --- 2. PLOTTING --- ####
+  
+# -------------------------------------------- #
+# 2.1 - Color
+# -------------------------------------------- #
+library(RColorBrewer)
+apal = brewer.pal(n=4, name = "Set1")
+
+# -------------------------------------------- #
+# 2.2 - Axis & Label customizatino ggplot
+# -------------------------------------------- #
+
+# Make axis title bigger
+theme_bw() +
+  theme(axis.title = element_text(size=20),
+        axis.text = element_text(size=16)) +
+
+# tilt x-axis label
+theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# white background with darker grey major grid line
+theme_bw() +
+  theme(panel.grid.major = element_line(colour="black")) +
+  theme(panel.grid.minor.y = element_line(colour="grey50")) +
+  theme(panel.grid.minor.x = element_line(colour="black"))
+
+# No legend
+theme(legend.position="none")
+
+# -------------------------------------------- #
+# 2.3 - spaghetti plot
+# -------------------------------------------- #
+g <- ggplot(data=x, aes(x = x, y = y, group = subID)) +
+  geom_point(size = 2, pch=21, aes(fill=grp1)) + 
+  geom_line(aes(colour=grp1))  +
+  scale_color_gradient2(low="red", high="blue") +
+  scale_fill_manual(values = apal[c(2,1)]) +
+  theme_bw() +
+  theme(panel.grid.minor.y = element_line(colour="white")) +
+  theme(panel.grid.minor.x = element_line(colour="white"))
+
+#### --- 3. dplyr --- ####
+
+t <- as.tibble(x) 
+
+t <- mutate(.data = x, 
+            newvar=var1*2,
+            newvar2=var1-var2)
+t %>% 
+  group_by(Gender, Wave) %>%
+  summarize(mean_age = mean(Age_T1), 
+            mean_seg_t1=mean(seg_T1)) %>%
+  filter(mean_age < 60)
+
+#### --- 4. R Markdown --- ####
+# -------------------------------------------- #
+# 4.1 Table of Content (floating)
+# -------------------------------------------- #
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+
+# -------------------------------------------- #
+# 4.2 Plot theme bw for all chunks
+# -------------------------------------------- #
+theme_set(theme_bw(base_size=12))
+theme_update(panel.background = element_rect(fill = "transparent", colour = NA),
+           plot.background = element_rect(fill = "transparent", colour = NA))
+apal = RColorBrewer::brewer.pal(n=4, name = "Set1")
+
+#### --- 5. MISC --- ####
+# -------------------------------------------- #
+# 5.1 - Reorder factors
+# -------------------------------------------- #
+x$something <- factor(x$something, levels = c(""))
+
+theme_classic() # no middle lines
+
+# -------------------------------------------- #
+# 5.2 - Deal with xls files
+# -------------------------------------------- #
+library(openxlsx)
+read.xlsx()
+write.xlsx()
+
+# -------------------------------------------- #
+# knit table
+# -------------------------------------------- #
+kable(datatable, caption="A Table")
+kable_styling(bootstrap_options = "striped", full_width = F, position = "float_right")
+
+
